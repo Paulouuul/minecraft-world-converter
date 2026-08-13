@@ -32,7 +32,7 @@ class MinecraftWorldToMCWorld:
                 self.bedrock_worlds_path = self.base_path / worlds_path
         else:
             # Caminho padrão
-            self.bedrock_worlds_path = self.base_path / "WORLDSMINECRAFT" / "com.mojang" / "minecraftWorlds"
+            self.bedrock_worlds_path = self.base_path / "MINECRAFTDATA" / "com.mojang" / "minecraftWorlds"
         
         # Criar diretórios
         self.output_path.mkdir(exist_ok=True)
