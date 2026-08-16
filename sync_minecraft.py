@@ -375,7 +375,7 @@ Exemplos:
   python sync_minecraft.py
   
   # Especificar caminho do Minecraft e user ID
-  python sync_minecraft.py --path "C:/Users/marci/AppData/Roaming/Minecraft Bedrock" --user 16283763834770312692
+  python sync_minecraft.py --path "C:/Users/user/AppData/Roaming/Minecraft Bedrock" --user 123456789
   
   # Usar 16 workers
   python sync_minecraft.py --workers 16
@@ -386,8 +386,8 @@ Exemplos:
     )
     
     # Valores padrao
-    DEFAULT_PATH = r"C:\Users\marci\AppData\Roaming\Minecraft Bedrock"
-    DEFAULT_USER = "16283763834770312692"
+    DEFAULT_PATH = str(Config.MINECRAFT_BEDROCK_PATH)
+    DEFAULT_USER = Config.MINECRAFT_USER_ID
     
     parser.add_argument('-p', '--path', default=DEFAULT_PATH,
                        help=f'Caminho da pasta do Minecraft (padrao: {DEFAULT_PATH})')
