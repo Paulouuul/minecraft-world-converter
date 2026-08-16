@@ -159,9 +159,7 @@ A configuração principal do projeto é realizada através do arquivo `.env`.
 ### Exemplo
 
 ```env
-# ============================================================
 # PASTAS DO PROJETO
-# ============================================================
 DEFAULT_WORLDS_PATH=MINECRAFTDATA/com.mojang/minecraftWorlds
 OUTPUT_MCWORLD_PATH=MUNDOS_MCWORLD
 OUTPUT_JAVA_PATH=MUNDOS_JAVA
@@ -169,33 +167,25 @@ BACKUP_PATH=BACKUP_MUNDOS
 TEMP_PATH=temp_conversao
 SOURCE_MCWORLD_PATH=MINECRAFTDATA/com.mojang
 
-# ============================================================
 # CAMINHOS DO MINECRAFT BEDROCK
-# ============================================================
 MINECRAFT_BEDROCK_PATH=~/AppData/Roaming/Minecraft Bedrock
 MINECRAFT_USER_ID=16283763834770312692
 
-# ============================================================
 # ARQUIVOS DE LOG
-# ============================================================
 LOG_FILE_MCWORLD=mcworld_converter_log.txt
 LOG_FILE_JAVA=java_converter_log.txt
 LOG_FILE_GENERAL=converter_log.txt
 LOG_FILE_SYNC=minecraft_sync_log.txt
 LOG_FILE_PARALLEL=parallel_converter_log.txt
 
-# ============================================================
 # CONFIGURAÇÕES
-# ============================================================
 TIMEOUT_SECONDS=7200
 COMPRESSION_LEVEL=6
 MAX_WORKERS=8
 SYNC_WORKERS=8
 SYNC_FORCE=false
 
-# ============================================================
 # MAPEAMENTO DE PASTAS
-# ============================================================
 PASTAS_SHARED=behavior_packs,development_behavior_packs,development_resource_packs,development_skin_packs,resource_packs,skin_packs,world_templates
 PASTAS_USER=minecraftWorlds,custom_skins,minecraftpe,Screenshots
 ```
