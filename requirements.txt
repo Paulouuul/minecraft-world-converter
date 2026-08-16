@@ -1,0 +1,50 @@
+# DEPENDENCIAS DO PROJETO
+# Minecraft World Converter
+
+# OBRIGATORIAS
+
+# Nenhuma dependencia obrigatoria para o funcionamento basico
+# O projeto usa apenas bibliotecas padrao do Python:
+#   - shutil
+#   - pathlib
+#   - datetime
+#   - concurrent.futures
+#   - threading
+#   - argparse
+#   - sys
+#   - os
+#   - time
+#   - json
+#   - zipfile
+#   - hashlib
+
+# OPCIONAIS (PARA DESENVOLVIMENTO/TESTES)
+
+# python-dotenv - Para carregar variaveis do .env (opcional)
+# O projeto ja tem suporte nativo a .env, mas esta biblioteca
+# pode ser usada como alternativa
+# python-dotenv>=1.0.0
+
+# psutil - Para monitoramento de recursos (opcional)
+# Usado para detectar automaticamente o numero ideal de workers
+# psutil>=5.9.0
+
+# NOTAS
+# 
+# O projeto funciona SEM nenhuma dependencia externa!
+# Apenas o Python padrao e necessario para:
+#   - Converter mundos para .mcworld
+#   - Sincronizar com o Minecraft
+#   - Gerenciar backups
+#
+# A unica dependencia necessaria (mcc-toolchest) e
+# necessaria APENAS para conversao Bedrock -> Java.
+#
+# Para instalar todas as dependencias:
+#   pip install -r requirements.txt
+#
+# Para instalar apenas o necessario (minimo):
+#   pip install mcc-toolchest
+#
+# Para instalar tudo (incluindo opcionais):
+#   pip install -r requirements.txt[full]
