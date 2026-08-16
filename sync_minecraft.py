@@ -1,5 +1,6 @@
-# sync_com_escolha.py
-# Sincroniza pastas com OPÇÃO de escolher quais itens sobrescrever
+# sync_minecraft.py
+# Sincroniza pastas com.mojang - recebe caminho do Minecraft e User ID
+# Uso: python sync_minecraft.py --path "C:/Users/marci/AppData/Roaming/Minecraft Bedrock" --user 16283763834770312692
 
 import shutil
 import time
@@ -13,12 +14,26 @@ import sys
 from config import Config
 
 class MinecraftWorldSync:
-    """Sincroniza pastas com opção de escolher quais itens sobrescrever"""
+    """Sincroniza pastas com.mojang - recebe caminho do Minecraft e User ID"""
     
-    def __init__(self, origem: Path = None, destino: Path = None, max_workers: int = None):
-        paths = Config.get_sync_paths()
-        self.origem = origem or paths['origem']
-        self.destino = destino or paths['destino']
+    def __init__(self, minecraft_path: Path, user_id: str, origem: Path = None, max_workers: int = None):
+        """
+        Args:
+            minecraft_path: Caminho para a pasta do Minecraft (ex: .../Minecraft Bedrock)
+            user_id: ID do usuário (ex: 16283763834770312692)
+            origem: Pasta origem dos arquivos (com.mojang)
+            max_workers: Número de workers paralelos
+        """
+        self.minecraft_path = Path(minecraft_path)
+        self.user_id = user_id
+        
+        # Determinar caminhos
+        self.shared_path = self.minecraft_path / "Users" / "Shared" / "games" / "com.mojang"
+        self.user_path = self.minecraft_path / "Users" / user_id / "games" / "com.mojang"
+        
+        # Pasta origem
+        self.origem = origem or Config.SOURCE_MCWORLD_PATH
+        
         self.max_workers = max_workers or Config.SYNC_WORKERS
         self.lock = threading.Lock()
         
@@ -32,11 +47,18 @@ class MinecraftWorldSync:
         # Log
         self.log_file = Config.LOG_FILE_SYNC
         with open(self.log_file, 'w', encoding='utf-8') as f:
-            f.write(f"=== SINCRONIZAÇÃO (COM ESCOLHA) INICIADA EM {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
+            f.write(f"=== SINCRONIZAÇÃO INICIADA EM {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
             f.write(f"📁 Origem: {self.origem}\n")
-            f.write(f"📂 Destino: {self.destino}\n")
+            f.write(f"📂 Minecraft: {self.minecraft_path}\n")
+            f.write(f"👤 User ID: {self.user_id}\n")
+            f.write(f"📂 Shared: {self.shared_path}\n")
+            f.write(f"📂 User: {self.user_path}\n")
             f.write(f"⚡ Workers: {self.max_workers}\n")
             f.write(f"{'='*60}\n\n")
+        
+        # Mapeamento de pastas para destinos
+        self.pastas_shared = ['behavior_packs', 'development_behavior_packs', 'resource_packs', 'development_resource_packs', 'skin_packs', 'development_skin_packs', 'world_templates']
+        self.pastas_user = ['minecraftWorlds', 'custom_skins', 'minecraftpe', 'Screenshots']
         
     def log(self, mensagem: str, salvar: bool = True, mostrar: bool = True):
         if mostrar:
@@ -45,17 +67,15 @@ class MinecraftWorldSync:
             with open(self.log_file, 'a', encoding='utf-8') as f:
                 f.write(f"{datetime.now().strftime('%H:%M:%S')} - {mensagem}\n")
     
-    def comparar_tamanho(self, origem_item: Path, destino_item: Path) -> tuple:
-        """Compara tamanho e retorna diferença"""
-        if origem_item.is_file():
-            tamanho_origem = origem_item.stat().st_size
-            tamanho_destino = destino_item.stat().st_size if destino_item.exists() else 0
+    def get_destino(self, nome_pasta: str) -> Path:
+        """Retorna o destino correto para uma pasta"""
+        if nome_pasta in self.pastas_shared:
+            return self.shared_path / nome_pasta
+        elif nome_pasta in self.pastas_user:
+            return self.user_path / nome_pasta
         else:
-            # É uma pasta - somar todos os arquivos
-            tamanho_origem = sum(f.stat().st_size for f in origem_item.rglob('*') if f.is_file())
-            tamanho_destino = sum(f.stat().st_size for f in destino_item.rglob('*') if f.is_file()) if destino_item.exists() else 0
-        
-        return tamanho_origem, tamanho_destino
+            # Pastas desconhecidas vão para User
+            return self.user_path / nome_pasta
     
     def copiar_item(self, args: tuple) -> dict:
         """Copia um item (pasta ou arquivo)"""
@@ -107,12 +127,13 @@ class MinecraftWorldSync:
                 tamanho_mb = origem_item.stat().st_size / (1024 * 1024)
             
             status_msg = "SOBRESCRITO" if sobrescrever and destino_item.exists() else "COPIADO"
+            destino_tipo = "Shared" if "Shared" in str(destino_item) else "User"
             return {
                 'nome': nome_item,
                 'caminho': caminho_relativo,
                 'status': status_msg.lower(),
                 'progresso': f"[{idx}/{total}]",
-                'mensagem': f'{tipo} ({tamanho_mb:.1f} MB)'
+                'mensagem': f'{tipo} → {destino_tipo} ({tamanho_mb:.1f} MB)'
             }
             
         except Exception as e:
@@ -135,7 +156,7 @@ class MinecraftWorldSync:
         
         print("Escolha uma opção:")
         print("  1. Sobrescrever TODOS os itens")
-        print("  2. NÃO sobrescrever NENHUM item (apenas copiar novos)")
+        print("  2. NÃO sobrescrever NENHUM item (apenas copiar novos) ✅ RECOMENDADO")
         print("  3. Escolher item por item")
         print("  4. Sobrescrever apenas por TAMANHO (se diferente)")
         print("  5. Sobrescrever apenas por DATA (se mais novo)")
@@ -164,7 +185,7 @@ class MinecraftWorldSync:
         print("="*60)
         print()
         print("Digite o número do item para sobrescrever")
-        print("Digite 0 para continuar sem mais sobrescritas")
+        print("Digite 0 para continuar")
         print()
         
         sobrescrever_set = set()
@@ -195,10 +216,12 @@ class MinecraftWorldSync:
     def sincronizar(self):
         """Sincroniza com opção de escolha"""
         self.log(f"\n{'='*60}")
-        self.log(f"🔄 SINCRONIZANDO (COM ESCOLHA)")
+        self.log(f"🔄 SINCRONIZANDO (LUGARES CORRETOS)")
         self.log(f"{'='*60}")
         self.log(f"📁 Origem: {self.origem}")
-        self.log(f"📂 Destino: {self.destino}")
+        self.log(f"👤 User ID: {self.user_id}")
+        self.log(f"📂 Shared: {self.shared_path}")
+        self.log(f"📂 User: {self.user_path}")
         self.log(f"⚡ Workers: {self.max_workers}")
         self.log(f"{'='*60}\n")
         
@@ -206,7 +229,9 @@ class MinecraftWorldSync:
             self.log(f"❌ ERRO: Pasta de origem não existe: {self.origem}")
             return None
         
-        self.destino.mkdir(parents=True, exist_ok=True)
+        # Criar pastas de destino
+        self.shared_path.mkdir(parents=True, exist_ok=True)
+        self.user_path.mkdir(parents=True, exist_ok=True)
         
         # ============================================================
         # LISTAR ITENS
@@ -218,27 +243,31 @@ class MinecraftWorldSync:
         
         for pasta_origem in self.origem.iterdir():
             if pasta_origem.is_dir():
-                pasta_destino = self.destino / pasta_origem.name
+                nome_pasta = pasta_origem.name
+                destino_pasta = self.get_destino(nome_pasta)
+                destino_tipo = "Shared" if nome_pasta in self.pastas_shared else "User"
                 
-                if not pasta_destino.exists():
-                    itens_para_processar.append((pasta_origem, pasta_destino))
-                    self.log(f"  🆕 {pasta_origem.name}/ (pasta inteira será copiada)")
+                if not destino_pasta.exists():
+                    # Pasta inteira não existe → copiar tudo
+                    itens_para_processar.append((pasta_origem, destino_pasta))
+                    self.log(f"  🆕 {nome_pasta}/ → {destino_tipo} (pasta inteira será copiada)")
                     continue
                 
-                self.log(f"  📂 Verificando: {pasta_origem.name}/")
+                self.log(f"  📂 Verificando: {nome_pasta}/ → {destino_tipo}")
                 
+                # Pasta existe → verificar APENAS 1 NÍVEL dentro
                 for item in pasta_origem.iterdir():
-                    destino_item = pasta_destino / item.name
+                    destino_item = destino_pasta / item.name
                     
                     if destino_item.exists():
                         itens_existentes.append((item, destino_item))
-                        # Mostrar tamanho e data
+                        # Mostrar info
                         if item.is_file():
                             tam_origem = item.stat().st_size / 1024
                             tam_destino = destino_item.stat().st_size / 1024
                             print(f"    📄 {item.name} ({tam_origem:.1f}KB → {tam_destino:.1f}KB)")
                         else:
-                            print(f"    📁 {item.name}/ (pasta)")
+                            print(f"    📁 {item.name}/")
                     else:
                         itens_para_processar.append((item, destino_item))
                         if item.is_dir():
@@ -343,6 +372,8 @@ class MinecraftWorldSync:
         self.log(f"  ⏭️  Mantidos: {self.itens_pulados}")
         self.log(f"  ❌ Erros: {self.erros}")
         self.log(f"  ⏱️  Tempo: {tempo:.1f} segundos")
+        self.log(f"  📂 Destino Shared: {self.shared_path}")
+        self.log(f"  📂 Destino User: {self.user_path}")
         self.log(f"{'='*60}")
         
         return {
@@ -356,21 +387,32 @@ class MinecraftWorldSync:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Copia itens com opção de escolher sobrescrita',
+        description='Sincroniza pastas com.mojang para os lugares corretos',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Exemplos:
-  # Copiar com escolha
-  python sync_com_escolha.py
+  # Usar caminho padrão e user ID
+  python sync_minecraft.py
+  
+  # Especificar caminho do Minecraft e user ID
+  python sync_minecraft.py --path "C:/Users/marci/AppData/Roaming/Minecraft Bedrock" --user 16283763834770312692
   
   # Usar 16 workers
-  python sync_com_escolha.py --workers 16
+  python sync_minecraft.py --workers 16
   
-  # Forçar sem confirmação (usa última escolha)
-  python sync_com_escolha.py --force
+  # Forçar sem confirmação (não sobrescreve nada)
+  python sync_minecraft.py --force
         """
     )
     
+    # Valores padrão
+    DEFAULT_PATH = r"C:\Users\marci\AppData\Roaming\Minecraft Bedrock"
+    DEFAULT_USER = "16283763834770312692"
+    
+    parser.add_argument('-p', '--path', default=DEFAULT_PATH,
+                       help=f'Caminho da pasta do Minecraft (padrão: {DEFAULT_PATH})')
+    parser.add_argument('-u', '--user', default=DEFAULT_USER,
+                       help=f'ID do usuário (padrão: {DEFAULT_USER})')
     parser.add_argument('-w', '--workers', type=int, default=Config.SYNC_WORKERS,
                        help=f'Workers paralelos (padrão: {Config.SYNC_WORKERS})')
     parser.add_argument('-f', '--force', action='store_true',
@@ -381,7 +423,12 @@ Exemplos:
     if args.force:
         Config.SYNC_FORCE = True
     
-    sincronizador = MinecraftWorldSync(max_workers=args.workers)
+    sincronizador = MinecraftWorldSync(
+        minecraft_path=args.path,
+        user_id=args.user,
+        max_workers=args.workers
+    )
+    
     resultado = sincronizador.sincronizar()
     
     if resultado:
