@@ -53,7 +53,7 @@ class WorldFinder:
         if not self.worlds:
             return "Nenhum mundo encontrado"
             
-        lines = [f"📋 Mundos encontrados: {len(self.worlds)}"]
+        lines = [f"- Mundos encontrados: {len(self.worlds)}"]
         for i, world in enumerate(self.worlds, 1):
             lines.append(f"  {i}. {world}")
         return '\n'.join(lines)

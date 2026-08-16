@@ -364,14 +364,14 @@ class MinecraftWorldSync:
         tempo = time.time() - inicio
         
         self.log(f"\n{'='*60}")
-        self.log(f"📊 RESUMO FINAL")
+        self.log(f"RESUMO FINAL")
         self.log(f"{'='*60}")
         self.log(f"  - Total itens: {self.total_itens}")
         self.log(f"  Copiados (novos): {self.itens_copiados - self.itens_sobrescritos}")
         self.log(f"  - Sobrescritos: {self.itens_sobrescritos}")
-        self.log(f"  ⏭️  Mantidos: {self.itens_pulados}")
+        self.log(f"  -  Mantidos: {self.itens_pulados}")
         self.log(f"  Erros: {self.erros}")
-        self.log(f"  ⏱️  Tempo: {tempo:.1f} segundos")
+        self.log(f"  -  Tempo: {tempo:.1f} segundos")
         self.log(f"  - Destino Shared: {self.shared_path}")
         self.log(f"  - Destino User: {self.user_path}")
         self.log(f"{'='*60}")
