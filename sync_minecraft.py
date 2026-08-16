@@ -1,6 +1,5 @@
 # sync_minecraft.py
 # Sincroniza pastas com.mojang - recebe caminho do Minecraft e User ID
-# CORRIGIDO: Perguntas sequenciais, copia em paralelo
 
 import shutil
 import time
