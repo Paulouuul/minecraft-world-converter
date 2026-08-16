@@ -48,9 +48,7 @@ Exemplos:
     
     args = parser.parse_args()
     
-    # ========================================
     # CONFIGURAÇÃO
-    # ========================================
     Config.create_directories()
     
     # Criar logger
@@ -61,7 +59,7 @@ Exemplos:
     
     logger = Logger(log_file)
     logger.log_section("CONVERSOR DE MUNDOS MINECRAFT")
-    logger.log(f"📁 Base: {Config.BASE_PATH}")
+    logger.log(f"- Base: {Config.BASE_PATH}")
     
     # Determinar caminho
     if args.path:
@@ -71,11 +69,9 @@ Exemplos:
     else:
         worlds_path = Config.DEFAULT_WORLDS_PATH
     
-    logger.log(f"📂 Mundos: {worlds_path}")
+    logger.log(f"- Mundos: {worlds_path}")
     
-    # ========================================
     # ENCONTRAR MUNDOS
-    # ========================================
     finder = WorldFinder(worlds_path)
     worlds = finder.find_worlds()
     
@@ -91,32 +87,24 @@ Exemplos:
             logger.log_error("Nenhum dos mundos especificados foi encontrado")
             sys.exit(1)
     
-    # ========================================
     # LISTAR MUNDOS
-    # ========================================
     if args.list:
         print(finder.get_summary())
         sys.exit(0)
     
-    # ========================================
     # RESUMO
-    # ========================================
-    logger.log("\n📋 Mundos encontrados:")
+    logger.log("Mundos encontrados:")
     for i, world in enumerate(worlds, 1):
         logger.log(f"  {i}. {world.name} ({world.world_type}) - {world.size_mb:.1f} MB")
     
-    # ========================================
     # CONFIRMAÇÃO
-    # ========================================
     if not args.no_confirm:
         tipo = "Java" if args.java else ".mcworld"
-        if not confirm_action(f"\n❓ Converter {len(worlds)} mundo(s) para {tipo}?"):
-            logger.log("⏹️ Cancelado")
+        if not confirm_action(f"\n- Converter {len(worlds)} mundo(s) para {tipo}?"):
+            logger.log("Cancelado")
             sys.exit(0)
     
-    # ========================================
     # CONVERSÃO
-    # ========================================
     if args.java:
         converter = BedrockJavaConverter(Config.OUTPUT_JAVA_PATH, logger)
     else:
@@ -133,19 +121,17 @@ Exemplos:
         else:
             falhas += 1
     
-    # ========================================
     # RESUMO FINAL
-    # ========================================
     tempo = time.time() - inicio
     logger.log(f"\n{'='*60}")
-    logger.log("📊 RESUMO FINAL")
+    logger.log("RESUMO FINAL")
     logger.log(f"{'='*60}")
     logger.log(f"  Total: {len(worlds)} mundos")
-    logger.log(f"  ✅ Sucessos: {sucessos}")
-    logger.log(f"  ❌ Falhas: {falhas}")
-    logger.log(f"  ⏱️ Tempo: {format_time(tempo)}")
-    logger.log(f"  📁 Saída: {converter.output_path}")
-    logger.log(f"  💾 Backup: {Config.BACKUP_PATH}")
+    logger.log(f"  - Sucessos: {sucessos}")
+    logger.log(f"  - Falhas: {falhas}")
+    logger.log(f"  - Tempo: {format_time(tempo)}")
+    logger.log(f"  - Saída: {converter.output_path}")
+    logger.log(f"  - Backup: {Config.BACKUP_PATH}")
     
     if not args.java:
         logger.log("\n💡 Os arquivos .mcworld estão prontos para uso no Minecraft Bedrock!")

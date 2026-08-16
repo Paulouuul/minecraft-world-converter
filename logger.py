@@ -32,25 +32,25 @@ class Logger:
     def log_section(self, title: str):
         """Adiciona uma seção no log"""
         self.log(f"{'='*60}")
-        self.log(f"🎮 {title}")
-        self.log(f"📅 Data: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        self.log(f"{title}")
+        self.log(f"Data: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         self.log(f"{'='*60}")
         
     def log_error(self, message: str):
         """Log de erro"""
-        self.log(f"❌ {message}")
+        self.log(f"{message}")
         
     def log_success(self, message: str):
         """Log de sucesso"""
-        self.log(f"✅ {message}")
+        self.log(f"{message}")
         
     def log_warning(self, message: str):
         """Log de aviso"""
-        self.log(f"⚠️ {message}")
+        self.log(f"{message}")
         
     def log_info(self, message: str):
         """Log de informação"""
-        self.log(f"ℹ️ {message}")
+        self.log(f"ℹ{message}")
         
     def save_log(self):
         """Salva o log em arquivo"""
@@ -58,7 +58,7 @@ class Logger:
             try:
                 with open(self.log_file, 'w', encoding='utf-8') as f:
                     f.write('\n'.join(self.log_lines))
-                self.log(f"📝 Log salvo em: {self.log_file}")
+                self.log(f"Log salvo em: {self.log_file}")
             except Exception as e:
                 print(f"Erro ao salvar log: {e}")
                 

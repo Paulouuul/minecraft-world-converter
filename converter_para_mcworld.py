@@ -44,11 +44,11 @@ class MinecraftWorldToMCWorld:
         """Configura logs"""
         self.log_lines = []
         self.log(f"{'='*60}")
-        self.log(f"🎮 CONVERSOR PARA .MCWORLD")
-        self.log(f"📅 Início: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        self.log(f"📁 Base: {self.base_path}")
-        self.log(f"📂 Mundos fonte: {self.bedrock_worlds_path}")
-        self.log(f"📦 Destino: {self.output_path}")
+        self.log(f"- CONVERSOR PARA .MCWORLD")
+        self.log(f"- Início: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        self.log(f"- Base: {self.base_path}")
+        self.log(f"- Mundos fonte: {self.bedrock_worlds_path}")
+        self.log(f"- Destino: {self.output_path}")
         self.log(f"{'='*60}")
         
     def log(self, message):
@@ -63,7 +63,7 @@ class MinecraftWorldToMCWorld:
         try:
             with open(self.log_file, 'w', encoding='utf-8') as f:
                 f.write('\n'.join(self.log_lines))
-            self.log(f"📝 Log salvo em: {self.log_file}")
+            self.log(f"- Log salvo em: {self.log_file}")
         except Exception as e:
             print(f"Erro ao salvar log: {e}")
     
@@ -73,7 +73,7 @@ class MinecraftWorldToMCWorld:
         
         # Verificar se o caminho existe
         if not self.bedrock_worlds_path.exists():
-            self.log(f"❌ Caminho não encontrado: {self.bedrock_worlds_path}")
+            self.log(f"Caminho não encontrado: {self.bedrock_worlds_path}")
             return worlds
         
         # Verificar se é uma pasta de mundo diretamente
@@ -85,7 +85,7 @@ class MinecraftWorldToMCWorld:
             
             # Verificar se tem arquivo .mcworld (não precisa converter)
             if any(self.bedrock_worlds_path.glob("*.mcworld")):
-                self.log(f"ℹ️ Arquivos .mcworld encontrados, mas este conversor só processa pastas")
+                self.log(f"Arquivos .mcworld encontrados, mas este conversor só processa pastas")
                 return worlds
             
             # Procurar por mundos dentro da pasta
@@ -99,7 +99,7 @@ class MinecraftWorldToMCWorld:
                         worlds.append(item)
                 elif item.is_file() and item.suffix == '.mcworld':
                     # Já é .mcworld, não precisa converter
-                    self.log(f"ℹ️ {item.name} já é .mcworld - ignorando")
+                    self.log(f"ℹ{item.name} já é .mcworld - ignorando")
         
         return worlds
     
@@ -139,17 +139,17 @@ class MinecraftWorldToMCWorld:
         """Faz backup da pasta do mundo"""
         backup_dir = self.backup_path / world_path.name
         if backup_dir.exists():
-            self.log(f"  💾 Backup já existe: {world_path.name}")
+            self.log(f"  Backup já existe: {world_path.name}")
             return True
             
         try:
-            self.log(f"  💾 Fazendo backup de {world_path.name}...")
+            self.log(f"  Fazendo backup de {world_path.name}...")
             shutil.copytree(world_path, backup_dir)
             size_mb = sum(f.stat().st_size for f in backup_dir.rglob('*') if f.is_file()) / (1024*1024)
-            self.log(f"  ✅ Backup criado: {size_mb:.1f} MB")
+            self.log(f"  Backup criado: {size_mb:.1f} MB")
             return True
         except Exception as e:
-            self.log(f"  ❌ Erro no backup: {e}")
+            self.log(f"  Erro no backup: {e}")
             return False
     
     def convert_to_mcworld(self, world_path):
@@ -161,19 +161,19 @@ class MinecraftWorldToMCWorld:
         output_file = self.output_path / f"{world_name}.mcworld"
         
         self.log(f"\n{'─'*50}")
-        self.log(f"📁 Convertendo: {world_name}")
+        self.log(f"Convertendo: {world_name}")
         
         # Info do mundo
         info = self.get_world_info(world_path)
         size_mb = info['size'] / (1024*1024)
-        self.log(f"  📊 Tamanho: {size_mb:.1f} MB")
-        self.log(f"  📂 Tipo: {info['type']}")
-        self.log(f"  📅 Modificado: {info['last_modified'].strftime('%Y-%m-%d %H:%M')}")
+        self.log(f"  - Tamanho: {size_mb:.1f} MB")
+        self.log(f"  - Tipo: {info['type']}")
+        self.log(f"  - Modificado: {info['last_modified'].strftime('%Y-%m-%d %H:%M')}")
         
         # Verificar se é um mundo válido
         if not (world_path / "level.dat").exists():
-            self.log(f"  ⚠️ ATENÇÃO: 'level.dat' não encontrado!")
-            self.log(f"  ⚠️ Pode não ser um mundo válido. Continuando mesmo assim...")
+            self.log(f"  ATENÇÃO: 'level.dat' não encontrado!")
+            self.log(f"  Pode não ser um mundo válido. Continuando mesmo assim...")
         
         # Backup
         if not self.backup_world(world_path):
@@ -181,17 +181,17 @@ class MinecraftWorldToMCWorld:
         
         # Verificar se arquivo de saída já existe
         if output_file.exists():
-            self.log(f"  ⚠️ Arquivo de saída já existe: {output_file.name}")
+            self.log(f"  Arquivo de saída já existe: {output_file.name}")
             resposta = input("  Sobrescrever? (s/N): ")
             if resposta.lower() != 's':
-                self.log("  ⏭️ Pulando")
+                self.log("  Pulando")
                 return False
             output_file.unlink()  # Remove o arquivo antigo
         
         # ========================================
         # AQUI ESTÁ A LÓGICA DO PRIMEIRO SCRIPT
         # ========================================
-        self.log(f"  🔄 Compactando mundo...")
+        self.log(f"  Compactando mundo...")
         
         try:
             # Contador para progresso
@@ -214,10 +214,10 @@ class MinecraftWorldToMCWorld:
             # Verificar se o arquivo foi criado
             if output_file.exists():
                 tamanho_mb = output_file.stat().st_size / (1024 * 1024)
-                self.log(f"  ✅ CONVERSÃO CONCLUÍDA!")
-                self.log(f"  📦 Arquivo: {output_file.name}")
-                self.log(f"  📊 Tamanho: {tamanho_mb:.2f} MB")
-                self.log(f"  📄 Arquivos: {arquivos_total}")
+                self.log(f"  CONVERSÃO CONCLUÍDA!")
+                self.log(f"  Arquivo: {output_file.name}")
+                self.log(f"  Tamanho: {tamanho_mb:.2f} MB")
+                self.log(f"  Arquivos: {arquivos_total}")
                 
                 # Salvar info de conversão
                 info_file = self.output_path / f"{world_name}_info.txt"
@@ -231,11 +231,11 @@ class MinecraftWorldToMCWorld:
                 
                 return True
             else:
-                self.log(f"  ❌ Arquivo de saída não foi criado!")
+                self.log(f"  Arquivo de saída não foi criado!")
                 return False
                 
         except Exception as e:
-            self.log(f"  ❌ Erro na compactação: {e}")
+            self.log(f"  Erro na compactação: {e}")
             import traceback
             self.log(f"  Detalhes: {traceback.format_exc()[:300]}")
             return False
@@ -247,7 +247,7 @@ class MinecraftWorldToMCWorld:
             worlds = self.find_worlds()
             
             if not worlds:
-                self.log("❌ Nenhuma pasta de mundo encontrada!")
+                self.log("Nenhuma pasta de mundo encontrada!")
                 self.log(f"   Verifique: {self.bedrock_worlds_path}")
                 self.log("   Este conversor processa PASTAS de mundo, não arquivos .mcworld")
                 return False
@@ -256,11 +256,11 @@ class MinecraftWorldToMCWorld:
             if worlds_to_convert:
                 worlds = [w for w in worlds if w.name in worlds_to_convert]
                 if not worlds:
-                    self.log(f"❌ Nenhum dos mundos especificados encontrado")
+                    self.log(f"Nenhum dos mundos especificados encontrado")
                     return False
             
             # Mostrar resumo
-            self.log(f"\n📋 Mundos encontrados (pastas):")
+            self.log(f"\nMundos encontrados (pastas):")
             for i, world in enumerate(worlds, 1):
                 info = self.get_world_info(world)
                 size_mb = info['size'] / (1024*1024)
@@ -268,9 +268,9 @@ class MinecraftWorldToMCWorld:
             
             # Confirmar
             if not no_confirm:
-                resposta = input(f"\n❓ Converter {len(worlds)} mundo(s) para .mcworld? (s/N): ")
+                resposta = input(f"\nConverter {len(worlds)} mundo(s) para .mcworld? (s/N): ")
                 if resposta.lower() != 's':
-                    self.log("⏹️ Cancelado")
+                    self.log("⏹Cancelado")
                     return False
             
             # Converter
@@ -288,25 +288,25 @@ class MinecraftWorldToMCWorld:
             # Resumo final
             tempo = time.time() - inicio
             self.log(f"\n{'='*60}")
-            self.log(f"📊 RESUMO FINAL")
+            self.log(f"RESUMO FINAL")
             self.log(f"{'='*60}")
             self.log(f"  Total: {len(worlds)} mundos")
-            self.log(f"  ✅ Sucessos: {sucessos}")
-            self.log(f"  ❌ Falhas: {falhas}")
-            self.log(f"  ⏱️ Tempo: {tempo/60:.1f} minutos")
-            self.log(f"  📁 Saída: {self.output_path}")
-            self.log(f"  💾 Backup: {self.backup_path}")
-            self.log(f"\n💡 Os arquivos .mcworld estão prontos para uso no Minecraft Bedrock!")
+            self.log(f"  - Sucessos: {sucessos}")
+            self.log(f"  Falhas: {falhas}")
+            self.log(f"  - Tempo: {tempo/60:.1f} minutos")
+            self.log(f"  - Saída: {self.output_path}")
+            self.log(f"  - Backup: {self.backup_path}")
+            self.log(f"\nOs arquivos .mcworld estão prontos para uso no Minecraft Bedrock!")
             
             self.save_log()
             return sucessos > 0
             
         except KeyboardInterrupt:
-            self.log("\n⚠️ Interrompido pelo usuário!")
+            self.log("\nInterrompido pelo usuário!")
             self.save_log()
             return False
         except Exception as e:
-            self.log(f"❌ Erro: {e}")
+            self.log(f"Erro: {e}")
             import traceback
             self.log(traceback.format_exc())
             self.save_log()
@@ -355,13 +355,13 @@ NOTA: Este conversor processa PASTAS de mundo e as compacta em .mcworld
     if args.list:
         worlds = converter.find_worlds()
         if worlds:
-            print(f"\n📋 Pastas de mundo encontradas em: {converter.bedrock_worlds_path}")
+            print(f"\nPastas de mundo encontradas em: {converter.bedrock_worlds_path}")
             for i, world in enumerate(worlds, 1):
                 info = converter.get_world_info(world)
                 size_mb = info['size'] / (1024*1024)
-                print(f"  {i}. {world.name} 📁 ({size_mb:.1f} MB) - {info['type']}")
+                print(f"  {i}. {world.name} - ({size_mb:.1f} MB) - {info['type']}")
         else:
-            print("❌ Nenhuma pasta de mundo encontrada")
+            print("Nenhuma pasta de mundo encontrada")
             print("   Este conversor procura por PASTAS com level.dat")
         return
     

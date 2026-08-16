@@ -101,8 +101,8 @@ Exemplos:
     # CONFIRMAÇÃO
     # ========================================
     if not args.no_confirm:
-        if not confirm_action(f"\n❓ Converter {len(worlds)} mundo(s) em PARALELO ({args.workers} por vez)?"):
-            logger.log("⏹️ Cancelado")
+        if not confirm_action(f"\n- Converter {len(worlds)} mundo(s) em PARALELO ({args.workers} por vez)?"):
+            logger.log("- Cancelado")
             sys.exit(0)
     
     # ========================================
@@ -122,17 +122,17 @@ Exemplos:
     # RESUMO FINAL
     # ========================================
     logger.log(f"\n{'='*60}")
-    logger.log(f"📊 RESUMO FINAL")
+    logger.log(f"RESUMO FINAL")
     logger.log(f"{'='*60}")
     logger.log(f"  Total: {stats['total']} mundos")
-    logger.log(f"  ✅ Sucessos: {stats['success']}")
-    logger.log(f"  ❌ Falhas: {stats['failed']}")
-    logger.log(f"  ⏱️ Tempo: {format_time(tempo)}")
-    logger.log(f"  ⚡ Trabalhadores: {args.workers}")
-    logger.log(f"  📁 Saída: {converter.output_path}")
-    logger.log(f"  💾 Backup: {Config.BACKUP_PATH}")
+    logger.log(f"  - Sucessos: {stats['success']}")
+    logger.log(f"  - Falhas: {stats['failed']}")
+    logger.log(f"  - Tempo: {format_time(tempo)}")
+    logger.log(f"  - Trabalhadores: {args.workers}")
+    logger.log(f"  - Saída: {converter.output_path}")
+    logger.log(f"  - Backup: {Config.BACKUP_PATH}")
     
-    logger.log("\n💡 Os arquivos .mcworld estão prontos para uso no Minecraft Bedrock!")
+    logger.log("\n- Os arquivos .mcworld estão prontos para uso no Minecraft Bedrock!")
     logger.log("   Basta dar duplo clique em um arquivo .mcworld para importar.")
     
     logger.save_log()

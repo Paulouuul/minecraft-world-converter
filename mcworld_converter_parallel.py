@@ -40,7 +40,7 @@ class MCWorldConverterParallel:
             current = self.stats['current']
             total = self.stats['total']
         
-        self.logger.log(f"[{current}/{total}] 📁 Iniciando: {world_name}")
+        self.logger.log(f"[{current}/{total}] - Iniciando: {world_name}")
         
         try:
             # Verificar se arquivo já existe
@@ -61,7 +61,7 @@ class MCWorldConverterParallel:
             # Verificar resultado
             if output_file.exists():
                 tamanho_mb = output_file.stat().st_size / (1024 * 1024)
-                self.logger.log_success(f"[{current}/{total}] ✅ {world_name} ({tamanho_mb:.1f} MB, {arquivos_total} arquivos)")
+                self.logger.log_success(f"[{current}/{total}] - {world_name} ({tamanho_mb:.1f} MB, {arquivos_total} arquivos)")
                 
                 # Salvar informações
                 info_file = self.output_path / f"{world_name}_info.txt"
@@ -92,11 +92,11 @@ class MCWorldConverterParallel:
         self.stats['current'] = 0
         
         self.logger.log(f"\n{'='*60}")
-        self.logger.log(f"🚀 INICIANDO CONVERSÃO PARALELA")
+        self.logger.log(f"INICIANDO CONVERSÃO PARALELA")
         self.logger.log(f"{'='*60}")
-        self.logger.log(f"📁 Total de mundos: {len(worlds)}")
-        self.logger.log(f"⚡ Trabalhadores: {self.max_workers}")
-        self.logger.log(f"📂 Saída: {self.output_path}")
+        self.logger.log(f"- Total de mundos: {len(worlds)}")
+        self.logger.log(f"- Trabalhadores: {self.max_workers}")
+        self.logger.log(f"- Saída: {self.output_path}")
         self.logger.log(f"{'='*60}\n")
         
         resultados = []
@@ -120,12 +120,12 @@ class MCWorldConverterParallel:
         
         # Resumo final
         self.logger.log(f"\n{'='*60}")
-        self.logger.log(f"📊 RESUMO FINAL (PARALELO)")
+        self.logger.log(f"RESUMO FINAL (PARALELO)")
         self.logger.log(f"{'='*60}")
         self.logger.log(f"  Total: {self.stats['total']} mundos")
-        self.logger.log(f"  ✅ Sucessos: {self.stats['success']}")
-        self.logger.log(f"  ❌ Falhas: {self.stats['failed']}")
-        self.logger.log(f"  ⚡ Trabalhadores: {self.max_workers}")
-        self.logger.log(f"  📂 Saída: {self.output_path}")
+        self.logger.log(f"  - Sucessos: {self.stats['success']}")
+        self.logger.log(f"  - Falhas: {self.stats['failed']}")
+        self.logger.log(f"  - Trabalhadores: {self.max_workers}")
+        self.logger.log(f"  - Saída: {self.output_path}")
         
         return self.stats
