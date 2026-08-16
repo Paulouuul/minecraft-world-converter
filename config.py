@@ -37,11 +37,11 @@ class Config:
     MINECRAFT_WORLDS_PATH = MINECRAFT_USER_PATH / "minecraftWorlds"
     
     # ARQUIVOS DE LOG
-    LOG_FILE_MCWORLD = BASE_PATH / "conversao_mcworld_log.txt"
-    LOG_FILE_JAVA = BASE_PATH / "conversao_java_log.txt"
-    LOG_FILE_GENERAL = BASE_PATH / "conversao_log.txt"
-    LOG_FILE_SYNC = BASE_PATH / "sincronizacao_log.txt"
-    LOG_FILE_PARALLEL = BASE_PATH / "conversao_parallel_log.txt"
+    LOG_FILE_MCWORLD = BASE_PATH / "mcworld_converter_log.txt"
+    LOG_FILE_JAVA = BASE_PATH / "java_converter_log.txt"
+    LOG_FILE_GENERAL = BASE_PATH / "converter_log.txt"
+    LOG_FILE_SYNC = BASE_PATH / "minecraft_sync_log.txt"
+    LOG_FILE_PARALLEL = BASE_PATH / "parallel_converter_log.txt"
     
     # CONFIGURAÇÕES DE CONVERSÃO
     TIMEOUT_SECONDS = 7200          # 2 horas
