@@ -48,12 +48,12 @@ class MinecraftWorldSync:
         self.log_file = Config.LOG_FILE_SYNC
         with open(self.log_file, 'w', encoding='utf-8') as f:
             f.write(f"=== SINCRONIZAÇÃO INICIADA EM {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} ===\n")
-            f.write(f"📁 Origem: {self.origem}\n")
-            f.write(f"📂 Minecraft: {self.minecraft_path}\n")
-            f.write(f"👤 User ID: {self.user_id}\n")
-            f.write(f"📂 Shared: {self.shared_path}\n")
-            f.write(f"📂 User: {self.user_path}\n")
-            f.write(f"⚡ Workers: {self.max_workers}\n")
+            f.write(f"- Origem: {self.origem}\n")
+            f.write(f"- Minecraft: {self.minecraft_path}\n")
+            f.write(f"- User ID: {self.user_id}\n")
+            f.write(f"- Shared: {self.shared_path}\n")
+            f.write(f"- User: {self.user_path}\n")
+            f.write(f"- Workers: {self.max_workers}\n")
             f.write(f"{'='*60}\n\n")
         
         # Mapeamento de pastas para destinos
@@ -115,10 +115,10 @@ class MinecraftWorldSync:
             
             if origem_item.is_dir():
                 shutil.copytree(origem_item, destino_item)
-                tipo = "📁 Pasta"
+                tipo = "- Pasta"
             else:
                 shutil.copy2(origem_item, destino_item)
-                tipo = "📄 Arquivo"
+                tipo = "- Arquivo"
             
             # Calcular tamanho
             if origem_item.is_dir():
@@ -150,13 +150,13 @@ class MinecraftWorldSync:
     def escolher_sobrescrita(self, itens_existentes: list) -> dict:
         """Menu para escolher quais itens sobrescrever"""
         print("\n" + "="*60)
-        print("📋 ITENS QUE JÁ EXISTEM NO DESTINO")
+        print("- ITENS QUE JÁ EXISTEM NO DESTINO")
         print("="*60)
         print()
         
         print("Escolha uma opção:")
         print("  1. Sobrescrever TODOS os itens")
-        print("  2. NÃO sobrescrever NENHUM item (apenas copiar novos) ✅ RECOMENDADO")
+        print("  2. NÃO sobrescrever NENHUM item (apenas copiar novos) RECOMENDADO")
         print("  3. Escolher item por item")
         print("  4. Sobrescrever apenas por TAMANHO (se diferente)")
         print("  5. Sobrescrever apenas por DATA (se mais novo)")
@@ -181,7 +181,7 @@ class MinecraftWorldSync:
     def escolher_individual(self, itens_existentes: list) -> dict:
         """Escolhe item por item para sobrescrever"""
         print("\n" + "="*60)
-        print("📋 ESCOLHA ITEM POR ITEM")
+        print("- ESCOLHA ITEM POR ITEM")
         print("="*60)
         print()
         print("Digite o número do item para sobrescrever")
@@ -204,11 +204,11 @@ class MinecraftWorldSync:
                 if 1 <= num <= len(itens_existentes):
                     item, caminho = itens_existentes[num-1]
                     sobrescrever_set.add(str(item))
-                    print(f"✅ {caminho} será sobrescrito")
+                    print(f"{caminho} será sobrescrito")
                 else:
-                    print("❌ Número inválido!")
+                    print("Número inválido!")
             except ValueError:
-                print("❌ Digite um número válido!")
+                print("Digite um número válido!")
         
         return {'todos': False, 'nenhum': False, 'individual': True, 
                 'sobrescrever_set': sobrescrever_set, 'tamanho': False, 'data': False}
@@ -216,17 +216,17 @@ class MinecraftWorldSync:
     def sincronizar(self):
         """Sincroniza com opção de escolha"""
         self.log(f"\n{'='*60}")
-        self.log(f"🔄 SINCRONIZANDO (LUGARES CORRETOS)")
+        self.log(f"- SINCRONIZANDO (LUGARES CORRETOS)")
         self.log(f"{'='*60}")
-        self.log(f"📁 Origem: {self.origem}")
-        self.log(f"👤 User ID: {self.user_id}")
-        self.log(f"📂 Shared: {self.shared_path}")
-        self.log(f"📂 User: {self.user_path}")
-        self.log(f"⚡ Workers: {self.max_workers}")
+        self.log(f"- Origem: {self.origem}")
+        self.log(f"- User ID: {self.user_id}")
+        self.log(f"- Shared: {self.shared_path}")
+        self.log(f"- User: {self.user_path}")
+        self.log(f"- Workers: {self.max_workers}")
         self.log(f"{'='*60}\n")
         
         if not self.origem.exists():
-            self.log(f"❌ ERRO: Pasta de origem não existe: {self.origem}")
+            self.log(f"ERRO: Pasta de origem não existe: {self.origem}")
             return None
         
         # Criar pastas de destino
@@ -236,7 +236,7 @@ class MinecraftWorldSync:
         # ============================================================
         # LISTAR ITENS
         # ============================================================
-        self.log(f"📁 LISTANDO ITENS...")
+        self.log(f"- LISTANDO ITENS...")
         
         itens_para_processar = []
         itens_existentes = []
@@ -250,10 +250,10 @@ class MinecraftWorldSync:
                 if not destino_pasta.exists():
                     # Pasta inteira não existe → copiar tudo
                     itens_para_processar.append((pasta_origem, destino_pasta))
-                    self.log(f"  🆕 {nome_pasta}/ → {destino_tipo} (pasta inteira será copiada)")
+                    self.log(f"  - {nome_pasta}/ → {destino_tipo} (pasta inteira será copiada)")
                     continue
                 
-                self.log(f"  📂 Verificando: {nome_pasta}/ → {destino_tipo}")
+                self.log(f"  - Verificando: {nome_pasta}/ → {destino_tipo}")
                 
                 # Pasta existe → verificar APENAS 1 NÍVEL dentro
                 for item in pasta_origem.iterdir():
@@ -265,22 +265,22 @@ class MinecraftWorldSync:
                         if item.is_file():
                             tam_origem = item.stat().st_size / 1024
                             tam_destino = destino_item.stat().st_size / 1024
-                            print(f"    📄 {item.name} ({tam_origem:.1f}KB → {tam_destino:.1f}KB)")
+                            print(f"    - {item.name} ({tam_origem:.1f}KB → {tam_destino:.1f}KB)")
                         else:
-                            print(f"    📁 {item.name}/")
+                            print(f"    - {item.name}/")
                     else:
                         itens_para_processar.append((item, destino_item))
                         if item.is_dir():
-                            self.log(f"    🆕 {item.name}/ (pasta será copiada)")
+                            self.log(f"    - {item.name}/ (pasta será copiada)")
                         else:
-                            self.log(f"    🆕 {item.name} (arquivo será copiado)")
+                            self.log(f"    - {item.name} (arquivo será copiado)")
         
         self.total_itens = len(itens_para_processar) + len(itens_existentes)
-        self.log(f"\n  ✅ Novos itens: {len(itens_para_processar)}")
-        self.log(f"  ✅ Itens existentes: {len(itens_existentes)}")
+        self.log(f"\n  Novos itens: {len(itens_para_processar)}")
+        self.log(f"  Itens existentes: {len(itens_existentes)}")
         
         if self.total_itens == 0:
-            self.log("❌ Nenhum item para processar!")
+            self.log("Nenhum item para processar!")
             return None
         
         # ============================================================
@@ -326,15 +326,15 @@ class MinecraftWorldSync:
         # ============================================================
         # CONFIRMAR
         # ============================================================
-        print(f"\n📊 RESUMO:")
-        print(f"  📁 Total itens: {self.total_itens}")
-        print(f"  🆕 Novos itens: {len(itens_para_processar)}")
-        print(f"  🔄 A sobrescrever: {sum(1 for a in args_list if a[4])}")
+        print(f"\nRESUMO:")
+        print(f"  - Total itens: {self.total_itens}")
+        print(f"  - Novos itens: {len(itens_para_processar)}")
+        print(f"  - A sobrescrever: {sum(1 for a in args_list if a[4])}")
         
         if not Config.SYNC_FORCE:
             resposta = input(f"\n❓ Continuar? (s/N): ")
             if resposta.lower() != 's':
-                self.log("⏹️ Cancelado!")
+                self.log("Cancelado!")
                 return None
         
         # ============================================================
@@ -350,13 +350,13 @@ class MinecraftWorldSync:
                 resultado = future.result()
                 
                 if resultado['status'] == 'copiado':
-                    self.log(f"  {resultado['progresso']} ✅ {resultado['caminho']} (COPIADO: {resultado['mensagem']})")
+                    self.log(f"  {resultado['progresso']} {resultado['caminho']} (COPIADO: {resultado['mensagem']})")
                 elif resultado['status'] == 'sobrescrito':
-                    self.log(f"  {resultado['progresso']} 🔄 {resultado['caminho']} (SOBRESCRITO: {resultado['mensagem']})")
+                    self.log(f"  {resultado['progresso']} - {resultado['caminho']} (SOBRESCRITO: {resultado['mensagem']})")
                 elif resultado['status'] == 'pulado':
                     pass
                 else:
-                    self.log(f"  {resultado['progresso']} ❌ {resultado['caminho']} (ERRO: {resultado['mensagem']})")
+                    self.log(f"  {resultado['progresso']} {resultado['caminho']} (ERRO: {resultado['mensagem']})")
         
         # ============================================================
         # RESUMO FINAL
@@ -366,14 +366,14 @@ class MinecraftWorldSync:
         self.log(f"\n{'='*60}")
         self.log(f"📊 RESUMO FINAL")
         self.log(f"{'='*60}")
-        self.log(f"  📁 Total itens: {self.total_itens}")
-        self.log(f"  ✅ Copiados (novos): {self.itens_copiados - self.itens_sobrescritos}")
-        self.log(f"  🔄 Sobrescritos: {self.itens_sobrescritos}")
+        self.log(f"  - Total itens: {self.total_itens}")
+        self.log(f"  Copiados (novos): {self.itens_copiados - self.itens_sobrescritos}")
+        self.log(f"  - Sobrescritos: {self.itens_sobrescritos}")
         self.log(f"  ⏭️  Mantidos: {self.itens_pulados}")
-        self.log(f"  ❌ Erros: {self.erros}")
+        self.log(f"  Erros: {self.erros}")
         self.log(f"  ⏱️  Tempo: {tempo:.1f} segundos")
-        self.log(f"  📂 Destino Shared: {self.shared_path}")
-        self.log(f"  📂 Destino User: {self.user_path}")
+        self.log(f"  - Destino Shared: {self.shared_path}")
+        self.log(f"  - Destino User: {self.user_path}")
         self.log(f"{'='*60}")
         
         return {
