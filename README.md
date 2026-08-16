@@ -112,7 +112,7 @@ Essas dependências não são necessárias para o funcionamento básico do proje
 ### 1. Clone ou baixe o projeto
 
 ```bash
-git clone https://github.com/seu-usuario/minecraft-world-converter.git
+git clone https://github.com/Paulouuul/minecraft-world-converter.git
 cd minecraft-world-converter
 ```
 
