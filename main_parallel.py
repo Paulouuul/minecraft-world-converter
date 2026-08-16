@@ -44,9 +44,7 @@ Exemplos:
     
     args = parser.parse_args()
     
-    # ========================================
     # CONFIGURAÇÃO
-    # ========================================
     Config.create_directories()
     
     # Criar logger
@@ -65,9 +63,7 @@ Exemplos:
     
     logger.log(f"📂 Mundos: {worlds_path}")
     
-    # ========================================
     # ENCONTRAR MUNDOS
-    # ========================================
     finder = WorldFinder(worlds_path)
     worlds = finder.find_worlds()
     
@@ -83,31 +79,23 @@ Exemplos:
             logger.log_error("Nenhum dos mundos especificados foi encontrado")
             sys.exit(1)
     
-    # ========================================
     # LISTAR MUNDOS
-    # ========================================
     if args.list:
         print(finder.get_summary())
         sys.exit(0)
     
-    # ========================================
     # RESUMO
-    # ========================================
     logger.log("\n📋 Mundos encontrados:")
     for i, world in enumerate(worlds, 1):
         logger.log(f"  {i}. {world.name} ({world.world_type}) - {world.size_mb:.1f} MB")
     
-    # ========================================
     # CONFIRMAÇÃO
-    # ========================================
     if not args.no_confirm:
         if not confirm_action(f"\n- Converter {len(worlds)} mundo(s) em PARALELO ({args.workers} por vez)?"):
             logger.log("- Cancelado")
             sys.exit(0)
     
-    # ========================================
     # CONVERSÃO PARALELA
-    # ========================================
     converter = MCWorldConverterParallel(
         Config.OUTPUT_MCWORLD_PATH, 
         logger, 
@@ -118,9 +106,7 @@ Exemplos:
     stats = converter.convert(worlds, overwrite=args.overwrite)
     tempo = time.time() - inicio
     
-    # ========================================
     # RESUMO FINAL
-    # ========================================
     logger.log(f"\n{'='*60}")
     logger.log(f"RESUMO FINAL")
     logger.log(f"{'='*60}")
