@@ -509,43 +509,21 @@ O projeto utiliza `.gitignore` para impedir que arquivos locais, logs, dados do 
 Exemplo:
 
 ```gitignore
-# Arquivos de ambiente
-.env
-.env.local
-.env.*.local
+.venv/
+venv/
+ENV/
+env/
+/MINECRAFTDATA
+/__pycache__
+/MUNDOS_MCWORLD
+/temp_conversao
 
-# Logs
-*.log
-*_log.txt
 minecraft_sync_log.txt
 parallel_converter_log.txt
 converter_log.txt
 java_converter_log.txt
 mcworld_converter_log.txt
-
-# Dados do projeto
-/MINECRAFTDATA
-/MUNDOS_MCWORLD
-/MUNDOS_JAVA
-/BACKUP_MUNDOS
-/temp_conversao
-/__pycache__
-
-# Python
-*.pyc
-*.pyo
-*.pyd
-.Python
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Windows
-Thumbs.db
-desktop.ini
+.env
 ```
 
 ---
